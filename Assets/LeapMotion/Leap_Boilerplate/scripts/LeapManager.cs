@@ -277,6 +277,7 @@ public class LeapManager : MonoBehaviour {
 				minZ = hand.PalmPosition.z;
 				forwardHand = hand;
 			}
+	        
 		}
 
 		return forwardHand;

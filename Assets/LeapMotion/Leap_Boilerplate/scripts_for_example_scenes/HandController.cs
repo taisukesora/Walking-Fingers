@@ -17,17 +17,37 @@ public class HandController : MonoBehaviour {
   void Update () {
     Hand primeHand = _leapManager.frontmostHand();
 
+
     if(primeHand.IsValid)
       {
 	Vector3[] fingerPositions = _leapManager.getWorldFingerPositions(primeHand);
-	gameObject.transform.position = primeHand.PalmPosition.ToUnityTranslated();
+
+	/* x座標軸に対して90°回転 */
+	Vector3 tmp = primeHand.PalmPosition.ToUnityTranslated();
+        tmp = Quaternion.Euler(90, 0, 0 )*tmp;
+	tmp += new Vector3(0, 9.0f, 0);
+	for(int i=0;i<fingers.GetLength(0);i++)
+	  {
+	    if(i < fingerPositions.GetLength(0))
+	      {
+		fingerPositions[i] = Quaternion.Euler(90, 0, 0)*fingerPositions[i];
+		fingerPositions[i] += new Vector3(0, 9.0f, 0);	
+	      }
+
+	  }	
+
+
+	//変位を滑らかに
+	//gameObject.transform.position = (3*gameObject.transform.position + primeHand.PalmPosition.ToUnityTranslated())/4;
+	gameObject.transform.position = (2*gameObject.transform.position + tmp)/3;
 	if(gameObject.renderer.enabled != true) { gameObject.renderer.enabled = true; }
 	
 	for(int i=0;i<fingers.GetLength(0);i++)
 	  {
 	    if(i < fingerPositions.GetLength(0))
 	      {
-		fingers[i].transform.position = fingerPositions[i];
+		//fingers[i].transform.position = (fingerPositions[i] + 3*fingers[i].transform.position)/4;
+		fingers[i].transform.position = (fingerPositions[i] + 2*fingers[i].transform.position)/3;
 		if(fingers[i].renderer.enabled == false) { fingers[i].renderer.enabled = true; }
 		if(lines[i].renderer.enabled == false) { lines[i].renderer.enabled = true; }
 		
